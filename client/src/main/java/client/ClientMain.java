@@ -1,7 +1,11 @@
 package client;
 
-public class ClientMain{
-public static void main(String[] args) {
-    System.out.println("Servidor iniciado correctamente");
-}
+import client.gui.GameWindow;
+import javafx.application.Application;
+
+public class ClientMain {
+    public static void main(String[] args) {
+        // Lanzar la aplicación JavaFX
+        Application.launch(GameWindow.class, args);
+    }
 }

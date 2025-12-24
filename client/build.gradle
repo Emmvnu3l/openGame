@@ -1,3 +1,19 @@
 plugins {
     id 'java'
+    id 'application'
+}
+
+application {
+    mainClass = 'client.Launcher'
+}
+
+dependencies {
+    implementation project(':shared')
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.0'
+    
+    // JavaFX dependencies
+    implementation 'org.openjfx:javafx-controls:21:win'
+    implementation 'org.openjfx:javafx-graphics:21:win'
+    implementation 'org.openjfx:javafx-base:21:win'
+    implementation 'org.openjfx:javafx-fxml:21:win'
 }

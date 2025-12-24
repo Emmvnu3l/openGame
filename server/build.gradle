@@ -1,3 +1,13 @@
 plugins {
     id 'java'
+    id 'application'
+}
+
+application {
+    mainClass = 'server.ServerMain'
+}
+
+dependencies {
+    implementation project(':shared')
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.0'
 }
