@@ -1,1 +1,5 @@
 rootProject.name = 'openGame'
+
+include 'client'
+include 'server'
+include 'shared'
