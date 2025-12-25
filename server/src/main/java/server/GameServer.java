@@ -1,6 +1,7 @@
 package server;
 
 import shared.NetworkConstants;
+import server.world.GameMap;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -15,8 +16,14 @@ public class GameServer {
     // Lista de clientes conectados (Thread-Safe)
     private static List<ClientHandler> clients = new CopyOnWriteArrayList<>();
     private static ObjectMapper mapper = new ObjectMapper();
+    
+    // Mapa del Juego
+    public static GameMap gameMap;
 
     public void start() {
+        // Inicializar Mapa (ej. 20x20 tiles)
+        gameMap = new GameMap(20, 20); 
+        
         try {
             serverSocket = new ServerSocket(NetworkConstants.PORT);
             isRunning = true;

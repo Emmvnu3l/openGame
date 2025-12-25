@@ -1,8 +1,10 @@
 package client.networking;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import shared.NetworkConstants;
-import shared.model.packets.MovePacket;
+import shared.model.packets.ChatPacket;
 import shared.model.packets.LoginPacket;
+import shared.model.packets.MapPacket;
+import shared.model.packets.MovePacket;
 import shared.model.packets.PositionPacket;
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -21,10 +23,20 @@ public class GameClient {
     
     // Callback para actualizar la GUI
     private Consumer<PositionPacket> onPositionUpdate;
+    private Consumer<ChatPacket> onChatReceived;
+    private Consumer<MapPacket> onMapReceived;
     private String myUsername;
 
     public void setOnPositionUpdate(Consumer<PositionPacket> callback) {
         this.onPositionUpdate = callback;
+    }
+
+    public void setOnChatReceived(Consumer<ChatPacket> callback) {
+        this.onChatReceived = callback;
+    }
+
+    public void setOnMapReceived(Consumer<MapPacket> callback) {
+        this.onMapReceived = callback;
     }
 
     public void connect(String username) {
@@ -65,9 +77,19 @@ public class GameClient {
                          String type = node.get("type").asText();
                          
                          if ("POSITION".equals(type)) {
-                             PositionPacket pos = mapper.treeToValue(node, PositionPacket.class);
-                             if (onPositionUpdate != null) {
-                                 onPositionUpdate.accept(pos);
+                            PositionPacket pos = mapper.treeToValue(node, PositionPacket.class);
+                            if (onPositionUpdate != null) {
+                                onPositionUpdate.accept(pos);
+                            }
+                        } else if ("map_data".equals(type)) {
+                            MapPacket map = mapper.treeToValue(node, MapPacket.class);
+                            if (onMapReceived != null) {
+                                onMapReceived.accept(map);
+                            }
+                        } else if ("CHAT".equals(type)) {
+                             ChatPacket chat = mapper.treeToValue(node, ChatPacket.class);
+                             if (onChatReceived != null) {
+                                 onChatReceived.accept(chat);
                              }
                          }
                      }
@@ -85,6 +107,28 @@ public class GameClient {
         try {
             MovePacket move = new MovePacket(myUsername, direction);
             String json = mapper.writeValueAsString(move);
+            out.println(json);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendChat(String message) {
+        if (out == null) return;
+        try {
+            ChatPacket chat = new ChatPacket(myUsername, message);
+            String json = mapper.writeValueAsString(chat);
+            out.println(json);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendPrivateChat(String target, String message) {
+        if (out == null) return;
+        try {
+            ChatPacket chat = new ChatPacket(myUsername, message, target, "PRIVATE");
+            String json = mapper.writeValueAsString(chat);
             out.println(json);
         } catch (Exception e) {
             e.printStackTrace();
